@@ -1,6 +1,12 @@
-// imort json data (which holds questions)
+// import json data (which holds questions)
 import jsonData from '../dataset.json' assert {type:"json"};
 
+// variable decleration
+const questionBox=document.querySelector(".questionBox");
+const answersBox=document.querySelector(".options");
+const nextButton=document.querySelector(".next");
+const previousButton=document.querySelector(".previous");
+const submitButton=document.querySelector(".sumbit")
 
 function showSpinner(){
     document.querySelector(".spinner").classList.add("show");
@@ -11,13 +17,8 @@ function hideSpinner(){
 // showSpinner();
 
 
-const questionBox=document.querySelector(".questionBox");
-const answersBox=document.querySelector(".options");
-const nextButton=document.querySelector(".next");
-const previousButton=document.querySelector(".previous");
-const submitButton=document.querySelector(".sumbit")
-
-let index=3;
+let data=null;
+let index=0;
 let score=0;
 
 const page=window.location.pathname;  // this stores the current page address
@@ -26,46 +27,24 @@ const page=window.location.pathname;  // this stores the current page address
 function init(){
         switch(page){
     case "/Pages/music.html":
-       musicQuiz();
+       data=jsonData.music;
         break;
     case "/Pages/modern_art.html":
-        modernArtQuiz();
+       data=jsonData['modern-art'];
         break;
     case "/Pages/coding.html":
-        codingQuiz();
+        data=jsonData.coding;
         break;
     }
+    showQuestion(data);
 }
 
 document.addEventListener("DOMContentLoaded",init);  //calling init function
     
-
-    // these three functions send different arguments based on the viewing page 
-
-    function musicQuiz(){
-        let currentTopic=jsonData.music;  // this stores the music questions array from json
-    //    let index=0;
-        showQuestion(currentTopic);
-         forTopic(currentTopic);
-    }
-
-    function modernArtQuiz(){
-        let currentTopic=jsonData['modern-art']; // this stores the modern questions array
-        showQuestion(currentTopic);
-         forTopic(currentTopic);
-    }
-
-    function codingQuiz(){
-        let currentTopic=jsonData.coding;  // this stores the coding questions array
-        showQuestion(currentTopic);
-          forTopic(currentTopic);
-    }
-
-
     // this function  shows question question and answer based on argument passed to it. 
-function showQuestion(currentTopic){
+function showQuestion(data){
     resetState();
-    let currentObject=currentTopic[index];
+    let currentObject=data[index];
     // const correctAnswer=currentQuestion.answer;
     let questionNo=index+1;
     questionBox.innerText=`${questionNo}. ${currentObject.question}`;
@@ -78,6 +57,7 @@ function showQuestion(currentTopic){
     });
 }
 
+
 function resetState(){      // resets previous state 
     while(answersBox.firstChild){
         answersBox.removeChild(answersBox.firstChild);
@@ -88,8 +68,8 @@ nextButton.addEventListener("click",showNextQuestion); // shows the next questio
 
 function showNextQuestion(){
       index++;
-    if(index<currentTopic.length){    
-        showQuestion(currentTopic);
+    if(index<data.length){    
+        showQuestion(data);
     }else{
         nextButton.disabled = true;
         // submitButton.disabled=false;
@@ -102,9 +82,9 @@ previousButton.addEventListener("click",showPreviousQuestion);  // shows the pre
 function showPreviousQuestion(){
     if(index>0){
          index--;
-        showQuestion(currentTopic);
+        showQuestion(data);
     }
-    if(index<currentTopic.length){
+    if(index<data.length){
         nextButton.disabled = false;
     }
 }
